@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>FLL Pseudo Generator — The Crew</title>
+  <style>
+    :root {
+      --bg-main: radial-gradient(circle at top, #020617, #000);
+      --bg-panel: linear-gradient(to bottom, #020617, #000);
+      --bg-soft: #020617;
+      --border: #1e293b;
+      --text-main: #ffffff;
+      --text-soft: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #0ea5e9;
+      --hint-bg: #020617;
+      --textarea-bg: #020617;
+      --canvas-shadow: rgba(56,189,248,.15);
+    }
+
+    body.light {
+      --bg-main: radial-gradient(circle at top, #f8fafc, #e5e7eb);
+      --bg-panel: linear-gradient(to bottom, #ffffff, #f1f5f9);
+      --bg-soft: #ffffff;
+      --border: #cbd5f5;
+      --text-main: #020617;
+      --text-soft: #475569;
+      --accent: #0284c7;
+      --accent-2: #0369a1;
+      --hint-bg: #ffffff;
+      --textarea-bg: #ffffff;
+      --canvas-shadow: rgba(2,132,199,.2);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: auto;
+      margin-bottom: 20px;
+      gap: 12px;
+    }
+
+    .brand {
+      text-align: left;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .badge {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      color: var(--accent);
+      font-weight: 700;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    .controls-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-toggle {
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: .2s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .hint {
+      max-width: 1200px;
+      margin: auto;
+      margin-bottom: 14px;
+      background: var(--hint-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      transition: background .25s ease, color .25s ease;
+    }
+
+    #container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    canvas {
+      background: url("tapete_fll.png") center/cover no-repeat;
+      border-radius: 16px;
+      cursor: crosshair;
+      box-shadow: 0 0 20px var(--canvas-shadow);
+      border: 1px solid var(--border);
+      transition: box-shadow .25s ease, border .25s ease;
+    }
+
+    #panel {
+      width: 340px;
+      background: var(--bg-panel);
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,0,0,.4);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: background .25s ease, border .25s ease;
+    }
+
+    .panel-title {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.95rem;
+      letter-spacing: .5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: .15s ease;
+      color: #020617;
+    }
+
+    button.secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.1);
+    }
+
+    textarea {
+      width: 95%;
+      height: 260px;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: "JetBrains Mono", monospace;
+      resize: none;
+      background: var(--textarea-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      transition: background .25s ease, color .25s ease, border .25s ease;
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      transition: color .25s ease;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>FLL Pseudo-Generator <span>by The Crew</span></h1>
+    <p>Transforme trajetos no tapete em pseudocódigo natural</p>
+    <div class="badge">FIRST LEGO League • UNEARTHED</div>
+  </div>
+
+  <div class="controls-top">
+    <button class="theme-toggle" id="themeToggle">🌙 Modo escuro</button>
+  </div>
+</header>
+
+<div class="hint">
+  Clique e arraste no tapete para desenhar o trajeto do robô. Solte o mouse e depois clique em <b>Gerar pseudocódigo</b>.
+</div>
+
+<div id="container">
+  <canvas id="canvas" width="1000" height="550"></canvas>
+
+  <div id="panel">
+    <div class="panel-title">CONTROLES</div>
+    <button onclick="generate()">Gerar pseudocódigo</button>
+    <button class="secondary" onclick="reset()">Limpar trajeto</button>
+    <textarea id="output" placeholder="O pseudocódigo aparecerá aqui..."></textarea>
+  </div>
+</div>
+
+<footer>
+  Desenvolvido pela equipe <b>The Crew</b> • FIRST LEGO League —
+  <a href="https://instagram.com/thecrew.fll" target="_blank">@thecrew.fll</a>
+</footer>
+
+<script>
+/* ---------- CANVAS ---------- */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const output = document.getElementById("output");
+
+const TAPETE_LARGURA_CM = 235.5;
+const TAPETE_ALTURA_CM = 113.6;
+
+const scaleX = TAPETE_LARGURA_CM / canvas.width;
+const scaleY = TAPETE_ALTURA_CM / canvas.height;
+
+let drawing = false;
+let rawPoints = [];
+let points = [];
+
+canvas.addEventListener("mousedown", e => {
+  drawing = true;
+  rawPoints = [];
+  points = [];
+  rawPoints.push(getPos(e));
+});
+
+canvas.addEventListener("mousemove", e => {
+  if (!drawing) return;
+  rawPoints.push(getPos(e));
+  drawRaw();
+});
+
+canvas.addEventListener("mouseup", () => {
+  drawing = false;
+  simplify();
+  draw();
+});
+
+canvas.addEventListener("mouseleave", () => drawing = false);
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+}
+
+function drawRaw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = "#38bdf8";
+  ctx.lineWidth = 6;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  rawPoints.forEach((p, i) => {
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  });
+  ctx.stroke();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = "#22c55e";
+  ctx.lineWidth = 7;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  points.forEach((p, i) => {
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  });
+  ctx.stroke();
+}
+
+/* ---------- INTELIGÊNCIA REAL ---------- */
+
+function simplify() {
+  const tolerance = 12;
+  points = [rawPoints[0]];
+
+  for (let i = 1; i < rawPoints.length; i++) {
+    const last = points[points.length - 1];
+    const dx = rawPoints[i].x - last.x;
+    const dy = rawPoints[i].y - last.y;
+    if (Math.hypot(dx, dy) > tolerance) {
+      points.push(rawPoints[i]);
+    }
+  }
+}
+
+function compressSegments() {
+  const segments = [];
+
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+
+    const dist = Math.hypot(dx, dy);
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+    segments.push({ dist, angle });
+  }
+
+  const merged = [];
+  const ANGLE_TOL = 18;
+
+  segments.forEach(seg => {
+    if (!merged.length) {
+      merged.push({ ...seg });
+    } else {
+      const last = merged[merged.length - 1];
+      const diff = Math.abs(((seg.angle - last.angle + 180) % 360) - 180);
+      if (diff < ANGLE_TOL) {
+        last.dist += seg.dist;
+      } else {
+        merged.push({ ...seg });
+      }
+    }
+  });
+
+  return merged;
+}
+
+function generate() {
+  if (points.length < 2) {
+    alert("Desenhe um trajeto primeiro!");
+    return;
+  }
+
+  const segments = compressSegments();
+  let text = "Plano de trajeto:\n\n";
+
+  let lastAngle = null;
+
+  segments.forEach((seg, i) => {
+    const distCm = seg.dist * scaleX;
+    const angle = seg.angle;
+
+    if (i === 0) {
+      text += `Saia da base e siga em frente por cerca de ${distCm.toFixed(1)} cm.\n`;
+    } else {
+      let turn = angle - lastAngle;
+      turn = ((turn + 180) % 360) - 180;
+
+      const dir = turn > 0 ? "à direita" : "à esquerda";
+      const mag = Math.abs(turn);
+
+      if (mag > 25) {
+        text += `Depois, vire aproximadamente ${mag.toFixed(0)}° ${dir} e avance mais ${distCm.toFixed(1)} cm.\n`;
+      } else {
+        text += `Em seguida, faça um pequeno ajuste ${dir} e percorra mais ${distCm.toFixed(1)} cm.\n`;
+      }
+    }
+
+    lastAngle = angle;
+  });
+
+  text += "\nFim do trajeto.";
+  output.value = text;
+}
+
+function reset() {
+  rawPoints = [];
+  points = [];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  output.value = "";
+}
+
+/* ---------- DARK / LIGHT MODE ---------- */
+const toggleBtn = document.getElementById("themeToggle");
+
+function setTheme(mode) {
+  if (mode === "light") {
+    document.body.classList.add("light");
+    toggleBtn.textContent = "🌞 Modo claro";
+  } else {
+    document.body.classList.remove("light");
+    toggleBtn.textContent = "🌙 Modo escuro";
+  }
+  localStorage.setItem("theme", mode);
+}
+
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) setTheme(savedTheme);
+
+toggleBtn.addEventListener("click", () => {
+  const isLight = document.body.classList.contains("light");
+  setTheme(isLight ? "dark" : "light");
+});
+</script>
+
+</body>
+</html>
